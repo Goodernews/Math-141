@@ -45,7 +45,7 @@ State population data comes from the Census:  `https://www.census.gov/data`
 > *No description provided*
 
 ```{r}
-behavior_covid <- read_csv(file = "/home/courses/math141f20/Data/covid-19-behaviors/us_covid.csv") #Reed 
+behavior_covid <- read_csv(file = "us_covid.csv") #Reed 
 
 state_covid_stats <- read_csv("https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-states.csv")
 
