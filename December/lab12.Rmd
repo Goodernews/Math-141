@@ -1,0 +1,246 @@
+---
+title: "Lab 12"
+author: "Taylor Blair"
+date: "Math 141, Week 13"
+output:
+  pdf_document: default
+urlcolor: blue
+---
+
+```{r setup, include=FALSE}
+# Do not modify this chunk.
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, fig.retina = 2)
+
+```
+
+
+
+# Not Due!  Just Practice!
+
+
+
+
+## Goals of this lab
+
+1. Learn how to upload data to the RStudio Server.
+1. Learn how to import data into our RStudio workspace.
+1. Learn how to load data in an RMarkdown document.
+1. Learn how to install a package.
+1. Practice interpreting coefficients in a linear regression model.
+1. Practice checking model assumptions.
+1. Draw conclusions about the utility of predictors in the model.
+1. Understand how the inclusion of multiple predictors can impact the utility of a particular predictor.
+
+
+
+
+## Problems
+
+```{r}
+# Load libraries
+library(tidyverse)
+library(broom)
+library(infer)
+library(modelr)
+library(moderndive)
+```
+
+### Problem 1
+
+In this problem, we are going to prepare ourselves for using R/RStudio/RMarkdown AFTER Math 141.  
+
+a. **Importing data via a web link:** Let's go to [Seattle's open government data website](https://data.seattle.gov/) and find a dataset.  Look for a csv version of the dataset.  If a link to the csv is provided then we can just insert the link directly into the `read_csv()` function, which lives in the `readr` library of the `tidyverse`. Let's practice doing that below.
+
+
+
+```{r, eval = FALSE}
+#Load library
+library(tidyverse)
+
+# Load data via read_csv()
+
+wage <- read_csv("https://data.seattle.gov/api/views/cf52-s8er/rows.csv?accessType=DOWNLOAD")
+
+```
+
+b. **Importing data saved on the RStudio Server:**  This will be a two-step process. 
+
+Step 1: Uploading the data to the RStudio Server 
+
+From the Seattle government website, download the csv of the dataset you found for part a. Follow these steps to upload it:
+
+* In the lower-right window, click on the "Files" tab.
+* Navigate to the location in your home directory where you want to store the dataset.
+* Then click "Upload".
+* Click "Choose File" and find the dataset on your computer.  Click "Open" and then "OK".
+
+Step 2: Loading the data in your workspace (and RMarkdown document)
+
+* In the upper-right window, click on the "Environment" tab.
+* Click "Import Dataset" and then "From Text (readr)..." 
+* Click "Browse" and navigate to the desired csv.
+* Look over the previewed version for any issues.
+* Click "Import".
+* From the console, grab the line of code that includes `read_csv()` and insert it below.
+    + You may have to insert `~/` before the file path.  Trying knitting the Rmd to see if you have any issues.
+
+
+```{r}
+# Load library
+library(tidyverse)
+
+# Load dataset
+
+Claire_Tardiness <- read_csv("Math141/December/Claire Tardiness - Sheet1.csv")
+
+
+Claire_Tardiness <-  Claire_Tardiness[
+  Claire_Tardiness$`Time difference [min]` != "N/A",]
+  
+https://drive.google.com/uc?export=download&id=
+  
+  
+  
+https://docs.google.com/spreadsheets/d/1kzz8N-WU4A69Vu58vGELZ1Z1cBErqogZXANYnRfd1nQ/edit?usp=sharing
+```
+
+c. **Installing a package**: So far, all the packages we have needed in Math 141 have already been pre-installed on the RStudio Server.  Now let's learn to install a package ourselves! (Note: You only need to install a package once.  But every time you want to use the functions of a package, you must load it.)
+
+To install a package, follow these steps:
+
+* In the lower-right window, click "Packages".
+* Then click "Install".
+* Type the name of the package.  Let's install `gbfs`.
+* Click "Install".
+* Notice that you can also use `install.package()`.
+
+```{r, eval = FALSE}
+install.packages("tensorflow")
+```
+
+d. **Customizing R Chunks**.  For each of the following R chunks, explain how the chunk options impacted the knitting/output file.
+
+i.  
+
+```{r, echo = FALSE}
+# Some stuff
+qt(p = 0.975, df = 29)
+```
+
+*********************************************************************************
+
+
+*********************************************************************************
+
+ii. 
+
+```{r, include = FALSE}
+# Some stuff
+qt(p = 0.975, df = 29)
+```
+
+
+
+*********************************************************************************
+
+
+*********************************************************************************
+
+iii. 
+
+```{r, fig.width = 5, fig.height = 3.5, fig.cap ="For scientific manuscripts, this is often where you will put the title and other important information.", message = TRUE, warning = TRUE}
+library(Lock5Data)
+HollywoodMovies2011 %>%
+ggplot(mapping = aes(x = Genre, y = AudienceScore)) + 
+  geom_boxplot() 
+```
+
+*********************************************************************************
+
+
+*********************************************************************************
+
+
+### Problem 2
+
+Let's return to the `SaratogaHouses` dataset and the question: **How much does a fireplace cost?**  that we explored in Lab 6.  
+
+
+```{r}
+library(mosaicData)
+data(SaratogaHouses)
+```
+
+```{r, eval = FALSE}
+# Look at the help file to learn more about the variables
+?SaratogaHouses
+```
+
+
+```{r}
+# Recall that we created a categorical variable for presence
+# of a fireplace.
+SaratogaHouses <- mutate(SaratogaHouses, fire = case_when(
+  fireplaces == 0 ~ "No",
+  fireplaces > 0 ~ "Yes"
+))
+```
+
+a. Build a linear regression model for `price` using `fire` and `livingArea`.  Assume the slopes in the model to vary. 
+
+```{r}
+
+```
+
+b. Run a hypothesis test to determine if the interaction term should be included in the model.  Make sure to check the model assumptions of linearity, constant variance, and normality of errors.  If assumptions are violated, state which ones and draw conclusions cautiously.  
+
+```{r}
+
+
+```
+
+*********************************************************************************
+
+
+
+*********************************************************************************
+
+c. Compute the $R$-squared value for the model fit in (a).  Interpret this value.
+
+
+```{r}
+
+```
+
+
+*********************************************************************************
+
+
+
+
+*********************************************************************************
+
+
+d. The `SaratogaHouses` dataset contains several other potential explanatory variables.  Build another model for `price` which makes use of at least two of these variables. (Feel free to also include `fire` and/or `livingArea` in your model).  To determine which variables to include, create some exploratory plots. 
+
+*********************************************************************************
+
+
+
+
+*********************************************************************************
+
+e. Compare the adjusted R squared values of the models in (a) and (d).  Which model is better?  Justify your answer.
+
+
+
+*********************************************************************************
+
+
+
+
+*********************************************************************************
+
+
+
+

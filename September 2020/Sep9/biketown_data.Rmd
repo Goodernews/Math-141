@@ -1,0 +1,24 @@
+---
+title: "biketown_test"
+author: "Taylor Blair"
+date: "9/9/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library("tidyverse")
+```
+
+
+## open biketown
+```{r}
+library("tidyverse")
+bike <- read_csv("/home/courses/math141f20/Data/biketown_spring1920.csv")
+glimpse(bike)
+```
+
+## Testing GGplot
+
+## Messing with color
+https://www.datanovia.com/en/blog/ggplot-colors-best-tricks-you-will-love/#:~:text=In%20this%20case%2C%20we'll,that%20are%20color%2Dblind%20friendly.

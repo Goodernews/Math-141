@@ -1,0 +1,128 @@
+---
+title: "Practice Linear Regression Modeling"
+author: "Insert Name"
+date: "Math 141, Week 6"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE,
+                      message = FALSE)
+```
+
+
+
+The goal of this worksheet is to practice exploring and unpacking the terms in linear regression models. We will return to the Palmer Penguins dataset to predict bill length using flipper length and species.
+
+### Set-up
+
+Let's first load the dataset and necessary packages for our analyses.
+
+```{r}
+library(palmerpenguins)
+library(tidyverse)
+library(moderndive)
+```
+
+
+
+###  Visualize the Data
+
+```{r}
+ggplot(data = penguins, mapping = aes(x = flipper_length_mm,
+                                      y = bill_length_mm,
+                                      color = species)) +
+  geom_point()
+```
+
+Describe the relationships you see in the data.
+
+*********************************************
+
++ Classification problem with three variables
+
+*********************************************
+
+
+### Model 1
+
+Here's a potential model.
+
+```{r}
+mod1 <- lm(bill_length_mm ~ flipper_length_mm + species, 
+           data = penguins)
+get_regression_table(mod1, print = TRUE)
+```
+
+What is the intercept term for each species?  
+
+*********************************************
+
++ $-2.0586$
+
+*********************************************
+
+Interpret $\hat{\beta_3}$ in context.
+
+*********************************************
+
+
+
+*********************************************
+
+
+What is the slope term for each species? Interpret in context.
+
+*********************************************
+ 
++ Chinstrap
+    + $8.7801$
++ Gentoo
+    + $2.8569$
+    
+
+*********************************************
+
+
+
+### Model 2
+
+Here's another potential model.
+
+```{r}
+mod2 <- lm(bill_length_mm ~ flipper_length_mm * species, 
+           data = penguins)
+get_regression_table(mod2, print = TRUE)
+```
+
+What is the intercept term for each species?  
+
+*********************************************
+
++ $13.587$
+
+*********************************************
+
+What is the slope term for each species? Pick one and interpret in context.
+
+*********************************************
+
++ Chinstrap
+    + $-7.994$
++ Gentoo
+    + $-34.323$
+    
+
+*********************************************
+
+Do you think we should use the same slopes model or the different slopes model for these data?  Justify your choice.
+
+
+*********************************************
+
+
+
+
+*********************************************
+
+

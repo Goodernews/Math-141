@@ -1,0 +1,176 @@
+---
+output: pdf_document
+---
+Sampling Distributions
+========================================================
+### Math 141
+### Week 7
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE, fig.align = "center")
+```
+
+
+```{r}
+library(tidyverse)
+library(pdxTrees)
+library(infer)
+```
+
+## Important Notes
+
+* To construct a Sampling Distribution for a statistic, we need access to the entire population so that we can take repeated samples from the population. 
+
+* But if we have access to the entire population, then we don't need a sampling distribution!
+
+* Often we only have access to a single sample.  In these cases, we will need to approximate the sampling distribution. 
+
+* We are studying the properties of a sampling distribution so that we can figure out how to approximate it well!
+
+
+## Data
+
+Let's use the `pdxTrees` data and focus on all the trees in a specific park: Mt Tabor Park.
+
+```{r}
+trees_mt_tabor <- get_pdxTrees_parks(park = "Mt Tabor Park")
+```
+
+### Examples 
+
+
+#### Example 1: Sampling Distribution for the Proportion of Douglas-Fir
+
+
+```{r}
+# Add column for Douglas-Fir
+trees_mt_tabor <- trees_mt_tabor %>%
+  mutate(Douglas_Fir = case_when(
+    Common_Name == "Douglas-Fir"  ~ "yes",
+    Common_Name != "Douglas-Fir"  ~ "no"))
+
+# Population distribution
+ggplot(data = trees_mt_tabor, mapping = aes(x = Douglas_Fir)) +
+  geom_bar(aes(y = ..prop.., group = 1), stat = "count") 
+
+#True population parameter
+summarize(trees_mt_tabor, parameter = mean(Douglas_Fir == "yes"))
+```
+
+
+
+```{r}
+# Draw random samples
+samples <- trees_mt_tabor %>% 
+  rep_sample_n(size = 50, reps = 4)
+  
+# Graph the samples
+ggplot(data = samples, mapping = aes(x = Douglas_Fir)) +
+  geom_bar(aes(y = ..prop.., group = 1), stat = "count") +
+  facet_wrap( ~ replicate)
+```
+
+```{r}
+# Construct the sampling distribution
+samp_dist <- trees_mt_tabor %>% 
+  rep_sample_n(size = 50, reps = 1000) %>%
+  group_by(replicate) %>%
+  summarize(statistic = mean(Douglas_Fir == "yes"))
+
+# Graph the sampling distribution
+ggplot(data = samp_dist, mapping = aes(x = statistic)) +
+  geom_histogram(bins = 21)
+```
+
+**Observations**:
+
+* Shape?
+* Center?
+* Spread?
+
+```{r}
+mean_of_means <- summarize(samp_dist, mean(statistic)) %>%
+  pull()
+mean_of_means
+
+std_error <- summarize(samp_dist, sd(statistic)) %>%
+  pull()
+std_error
+
+```
+
+**Questions of Interest:**
+
+1. What happens to the center/spread/shape as we increase the sample size?
+
++ Median approaches mean
++ Spread decreses
+
+
+To investigate, re-run the code but change the sample size (`size`) to 100, 150.
+
+2. What happens to the center/spread/shape if the true parameter changes?
+
+To investigate re-run the code but change "Douglas-Fir" to "BigLeaf Maple".
+
+#### Example 2: Sampling Distribution for the Mean Tree Height
+
+```{r}
+# Population distribution
+ggplot(data = trees_mt_tabor, mapping = aes(x = Tree_Height)) +
+  geom_histogram()
+
+#True population parameter
+summarize(trees_mt_tabor, parameter = mean(Tree_Height))
+```
+
+
+
+```{r}
+# Draw random samples
+samples <- trees_mt_tabor %>% 
+  rep_sample_n(size = 50, reps = 4)
+  
+# Graph the samples
+ggplot(data = samples, mapping = aes(x = Tree_Height)) +
+  geom_histogram() +
+  facet_wrap( ~ replicate)
+```
+
+```{r}
+# Construct the sampling distribution
+samp_dist <- trees_mt_tabor %>% 
+  rep_sample_n(size = 50, reps = 1000) %>%
+  group_by(replicate) %>%
+  summarize(statistic = mean(Tree_Height))
+
+# Graph the sampling distribution
+ggplot(data = samp_dist, mapping = aes(x = statistic)) +
+  geom_histogram(bins = 21)
+```
+
+**Observations**:
+
+* Shape?
+* Center?
+* Spread?
+
+```{r}
+mean_of_means <- summarize(samp_dist, mean(statistic)) %>%
+  pull()
+mean_of_means
+
+std_error <- summarize(samp_dist, sd(statistic)) %>%
+  pull()
+std_error
+
+```
+
+
+**Questions of Interest:**
+
+1. What happens to the center/spread/shape as we increase the sample size?
+
+To investigate, re-run the code but change the sample size (`size`) to 100, 150.
+
+2. How does the shape of the population distribution compare to the shape of the sampling distribution? 

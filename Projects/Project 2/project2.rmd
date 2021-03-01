@@ -1,0 +1,235 @@
+---
+title: "Project 2: Where did the Data Come From?"
+author: "Johann Niebuhr, Odilon Rojas, Taylor Blair"
+date: "Math 141, Week 7"
+output: pdf_document
+urlcolor: blue
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+#Import Libraries
+```{r, message=FALSE}
+library(tidyverse)
+
+```
+
+
+# Overview
+
+For project one we looked at individual covid precautions compared to the change in Covid cases. In order to create insight, we required three datasets: Covid behavior, Covid cases, and state by state population.
+
+# US Covid Behavior
+
+*How do people feel about Covid safety percautions*
+
+```{r, message=FALSE}
+behavior_covid <- read_csv("/home/courses/math141f20/Data/covid-19-behaviors/us_covid.csv")
+
+
+behavior_covid$endtime <- as.Date(behavior_covid$endtime, format = "%d/%m/%Y %H:%M") 
+behavior_covid <- behavior_covid %>%
+  rename(date=endtime)%>%
+  select(date, state, i12_health_1, i12_health_2)
+
+sample_n(behavior_covid, 5)
+
+
+```
+
+
+##Summary 
+
++ **Who**
+    + [Imperial College London Global Institute of Health Innovation](https://www.imperial.ac.uk/global-health-innovation/)
+    + [YouGov](yougov.com)
++ **When**
+    + Starts: `r min(behavior_covid$date)`
+    + Ends: `r max(behavior_covid$date)`
+    + Daily questionares
++ **Where**
+    + USA USA USA
+    + *Other countries were polled, but we are restricting our data to only the US*
++ **Why** 
+    + Imperial College of London research about the ongoing Covid-19 response. 
++ **How** 
+    + Surveys given to people online
++ **Who is included?**
+    + Individuals who recieve YouGov polls (Internet and in the US)
++ **What evidence is there that everyone is present?**
+    + It's a sample of a population and its deviations are often indicative of current status
+    + Weighted to reflect US demographics
+
+
+##Write up
+
+  The dataset `behavior_covid` (or `us_covid.csv`) is from The Imperial College London’s Global Institute of Health Innovation, in partnership with the British based international polling company YouGov. The Imperial College London is a major research university and according to its website the Global Institute of Health Innovation plays an advisory role for governments and companies. YouGov generally gathers data for market research and opinion polling, they earned their reputation by accurately predicting election outcomes in the UK.
+
+  The data was gathered via repeated surveys on the behaviors and satisfaction of people in response to COVID-19. The source of the respondents was presumably the YouGov panelists. YouGov has a panel of millions of people spread globally who are polled for their responses to surveys. People can sign up for the panel and will receive compensation for completing responses. The US panel contains 2 million respondents and from this pool a 1500 respondent sample is selected, “panelists are invited to each survey, based upon their age, gender, race, and education, in proportion to their frequency to the frequency of adult citizens in the most recent American Community Survey,” weighted based on “demographics, voter registration status, and 2016 Presidential vote.” The American Community Survey is the ongoing data collection project of the census bureau. YouGov reports a 4% margin of error in this process for adults and a 5% margin of error for voter registration. 
+
+  Since the sample is taken from YouGov’s participants, all of those sampled have internet access, at least enough to allow them to be participants. They must also all be people who have an interest in the incentive model used by YouGov. That YouGov weights and samples in order to be representative likely offsets many of the potential over and under representations in the YouGov population. As a data collection company YouGov seems to be fairly well regarded and is at the very least widely trusted by important organizations, the Imperial College London in this case. The College is an institution with a heavy research focus and consistently ranks in the top ten universities in the world. 
+
+
+
+
+# US Covid-19 Dataset
+
+*Covid Cases in US States*
+
+```{r, message=FALSE}
+github_url <- "https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-states.csv"
+state_covid_stats <- read_csv(github_url)
+
+state_covid_stats <- state_covid_stats%>% 
+  subset(select=-(fips))
+
+sample_n(state_covid_stats, 5)
+
+```
+***
+
+##Summary
+
++ **Who**
+    + [New York Times](https://www.nytimes.com/)
+    + State goverments
++ **When**
+    + Starts: `r min(state_covid_stats$date)`
+    + Up to: `r max(state_covid_stats$date)`
+    + Daily counts of covid cases between these two dates.
++ **Where**
+    + USA, USA, USA
+    + *Other countries were polled, but we are restricting our data to only the US*
++ **Why** 
+    + "*The New York Times is releasing a series of data files with cumulative counts of coronavirus cases in the United States, at the state and county level, over time. We are compiling this time series data from state and local governments and health departments in an attempt to provide a complete record of the ongoing outbreak.*" (Official statement)
+    + Create an open source repository for reaserchers
++ **How** 
+    + Reporters and data scientests working for the NYT track press releases along with state databases and aggregate the sources into several CSVs.
++ **Who is included?**
+    + Hierarchical step by step order to be counted
+        + Individuals who were tested
+        + Tested positive
+        + Results were confirmed to the state government
+        + State Goverment counted it in their data
+        + NYT kept the data in their counts (*majority of the time*)
+    + "[Probable cases](https://github.com/nytimes/covid-19-data/blob/master/PROBABLE-CASES-NOTE.md)"
++ **What evidence is there that everyone is present?**
+    + There isn't, but the data is close/good enough for our purposes and there isn't higher quality open source data avalible.
+
+##Write up
+
+  An important aspect of our project was to compare state behavior dataset to a historical covid cases dataset from identical time period. The trouble is, state level covid datasets are fragmented and often follow different guidelines. The time and effort it would take to track down the data from each state would likely exceed the scope of this course. This lead us to the [NYT Covid 19 dataset](https://github.com/nytimes/covid-19-data).
+  
+  The New York Times is a distinguished newspaper, so it can seem rather odd that is the creator of this dataset. To understand why The NYT put effort into creating a massive dataset, it is worth looking at the [NYT Mission statement](https://www.nytco.com/company/mission-and-values/):
+
+\begin{center}
+\textbf{\textit {We seek the truth and help people understand the world.}}
+\end{center} 
+
+  As the world gets ever more connected the role of numbers in making sense of noise has risen exponentially. To help readers understand what is happening in the current crisis, the NYT has been producing a steady stream of covid-19 graphics to help visualize growth. Although the NYT is large enough to create a data strictly for internal use, its mission statement encourages sharing knowledge.
+  
+  Although we filtered the data to the time range of `behavior_covid` (*Which was given and not updated*), the data spans from January 20th (first official case reported, in Snohomish County) to `r max(state_covid_stats$date)` (day this was knit: `max(state_covid_stats$date)`). 
+  
+  Data is collected from several sources. Primarly the NYT relies on the data provided by state goverments. This does have several confounding variables.
+
+###Confounding Issues with Counting Cases
+  *This subsection is necessary because what counts as a case is an essential part of our project, and Taylor could write pages about this.*
+  
+  As we previously mentioned, Covid-19 datasets are often fragmented and based upon several different standards. 
+  
+  Some states have different thresholds for a case to be reported, states change their records if thresholds are updated (sometimes removing cases), in addition lack of testing can be a confounding variable. 
+  
+  Another issue in recording is if an individual travels from one location where they were exposed to the virus, and die in another. States have different methods of counting deaths and cases so individuals can be double counted or not counted at all. This can be best seen in Nevada which reportedly [counted only one in five case](https://en.wikipedia.org/wiki/COVID-19_pandemic_in_Nevada#Statistics) by not counting individuals from out of state. The NYT handles these situations by counting only the location where the individual became exposed in a seperate location by overwritting local counts in their CSVs.
+  
+
+# State Population
+
+*2019 US Population*
+
+```{r, message = FALSE}
+
+state_pop_stats <-read_csv("~/Math141/Projects/Project 1/nst-est2019-alldata.csv")
+
+state_pop_stats <- state_pop_stats %>%
+  select(NAME, POPESTIMATE2019) %>%
+  rename(State=NAME)%>% 
+  rename(Population_2019=POPESTIMATE2019)
+
+sample_n(state_pop_stats, 5)
+```
+
+
+***
+
+##Summary
+
++ **Who**
+    + US government
+    + [Census Bureau](https://www.census.gov/)
++ **When**
+    + The population census data was collected on National Census Day, April 1st 2010.
+    + Estimations were made on other dates
++ **Where**
+    + USA, USA, USA
++ **Why** 
+    + In order to appropriate federal funding in an efficient manner the US gov organises a decennial census of the citizens of the US 
+    + Required by the US constitution.
++ **How** 
+    + People with clipboards going to every household.
+    + Estimations use some funky math with data from other government agencies
+    + [Official documentation](https://www2.census.gov/programs-surveys/popest/technical-documentation/methodology/2010-2019/natstcopr-methv2.pdf)
++ **Who is included?**
+    + Everyone\*! (*In the US*)
+    + Individuals that have responded to the census or have been included in suplemmentary statistics.
++ **What evidence is there that everyone is present?**
+    + It’s a census, which means it covers everyone regardless of status. 
+    + The population estimate can contain some errors, however, It includes approximately 328,293,000 individuals. This means 100,000 individuals would be 0.03%. So it is highly unlikely that the numbers are off by a large enough factor to impact our data.
+
+##Write Up
+
+  In order to compare states covid cases, we needed to scale case numbers so that our data wouldn’t over exaggerate more populous states. Using only a state's total number of cases would result in Wyoming appearing to have handled Covid better than California. Because of this we created a variable for cases per 100,000 individuals. 
+  
+  In order to create cases per 100,000, we wanted an estimate of each state's current population. R does contain a built in data frame of state populations called `state.x77`, however, the population estimates are from 1970. [Read more here](https://stat.ethz.ch/R-manual/R-patched/library/datasets/html/state.html)
+
+***
+
+```{r}
+data(state)
+cat("Oregon Population in x.77 dataset: ", data.frame(state.x77)[1][37,]*1000)
+
+```
+*For context, Oregon's current population is roughly 4.2 million*
+
+***
+  This led us to find the census population estimate 2019. It is worth noting that there is no 2020 population estimate because the 2020 census is ongoing.
+  
+  We will not focus too heavily on the 2010 census, as that is unlikely to be the greatest confounding variable, and is rather straightforward. The census is that the government counts every individual in a decennial event to reportion federal tools. 
+  
+  The census 2019 population estimate can be broken down into fairly simple formula with 4 variables: $Pop Base+Births-Deaths+Migration=Pop Est$. As has been previously mentioned, there is no 2020 data, so the estimation is based on the 2010 census and a series of statistics from other government bureaus.
+  
+  The census bureau does not calculate the birth and death records. Instead it relies on the NCHS, a subdivision of the CDC, which reports US health related statistics. The [NCHS](https://www.cdc.gov/nchs/index.htm) collects the annual [birth records](https://www.cdc.gov/nchs/products/databriefs/db387.htm) in addition to [death records](https://www.cdc.gov/nchs/products/databriefs.htm). These are then added to the population base.
+  
+  To calculate for migration the census breaks the problem into two categories, domestic and international. Domestic migration is calculated with data from three main sources: tax returns from the IRS, medicare data from CMS, and Social security data from the SSA. By using data from these sources the census can approximate the rate as a percentage at which individuals leave and enter a given state. 
+  
+  International migration contains 5 categories We will not delve into the specifics of each method as they are outside the scope of this project and exact information on methods is not easily accessible. 
+  
++ *Foreign-Born Immigration*
+    + Non US Citizens entering the US
+    + Broken into two subcategories: from Mexico, not from Mexico
++ *Foreign-Born Emigration*
+    + Non US Citizens leaving the US
+    + Broken into 7 unequal subcategories based on: gender, country, length stay 
++ *Migration between the United States and Puerto Rico*
+    + "U.S. citizens residing in Puerto Rico" (Puerto Rican citizens are both US and not full US citizens)
+    + Based on community surveys and net air traffic
++ *Native-Born Migration*
+    + US civillian Citizens living in another country
+    + Using other countries census and [population registers](https://www.encyclopedia.com/social-sciences/encyclopedias-almanacs-transcripts-and-maps/population-registers)
++ *Armed Forces Population*
+    + Individuals in military service
+    + Data sourced from: [Defense Manpower Data Center](https://www.dmdc.osd.mil/appj/dwp/index.jsp). No exact methodology given. 
+  
+  There are ways to use the above to calculate change in a given demographic. But because we only use the state level data we will summarise by saying that the Census bureau calculates for each county and the sum of counties in a state is used to make the state population. More information on process can be found [here](https://www2.census.gov/programs-surveys/popest/technical-documentation/methodology/2010-2019/natstcopr-methv2.pdf).
+

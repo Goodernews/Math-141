@@ -1,0 +1,44 @@
+---
+title: "Lab01_r_markdown"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 1. Inspecting PDX Trees
+
+###a. For data frames, what does a row represent? What does a column represent?
+ + A row represents a data point
+ + A column represents a feature
+
+###b. Run the following code to load the pdxTrees library/package and to grab data on trees in Portland parks.
+```{r}
+library(pdxTrees)
+pdxTrees_parks <- get_pdxTrees_parks()
+```
+
+###c. Run the following to begin exploring the data. (Leave the eval = FALSE.)
+```{r}
+View(pdxTrees_parks)
+?get_pdxTrees_parks
+```
+
+###d. What does a row of the data frame represent? How many rows are in the data frame?
+ + 25,534 rows
+ + A row represents a single tree in the portland area
+
+
+###e. What does a column of the data frame represent? How many columns are in the data frame?
+ + 34 columns
+ + A column represents a feature or variable
+ 
+###f. List three quantitative variables found in the dataset (beyond those discussed in class).
+ + Longitude, Latitude, useriD, DBH, Inventory date, tree height, crown width NS and EW, crown base height, structural value, carbon storage pounds, carbon storage value, carbon sequestration pounds, carbon sequest val, stormwater ft, pollution removal val, pollution removal oz, total annual services
+ 
+
+
+library(palmerpenguins)
+penguins
+View(penguins)
